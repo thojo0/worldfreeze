@@ -22,6 +22,7 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.DimensionArgumentType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -47,7 +48,7 @@ public class WorldFreeze implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Initializing " + MOD_ID + " ...");
+		LOGGER.info("Initializing " + MOD_NAME + " " + MOD_VERSION);
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(CommandManager.literal(MOD_ID)
 					.requires(source -> source.hasPermissionLevel(4))
@@ -68,21 +69,21 @@ public class WorldFreeze implements ModInitializer {
 		});
 		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			if (isFrozen(world)) {
-				sendMessage(player.getCommandSource((ServerWorld) world), WORLD_FROZEN_MSG);
+				sendMessage(player, WORLD_FROZEN_MSG);
 				return ActionResult.FAIL;
 			}
 			return ActionResult.PASS;
 		});
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			if (!player.isSpectator() && isFrozen(world)) {
-				sendMessage(player.getCommandSource((ServerWorld) world), WORLD_FROZEN_MSG);
+				sendMessage(player, WORLD_FROZEN_MSG);
 				return ActionResult.FAIL;
 			}
 			return ActionResult.PASS;
 		});
 		PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
 			if (isFrozen(world)) {
-				sendMessage(player.getCommandSource((ServerWorld) world), WORLD_FROZEN_MSG);
+				sendMessage(player, WORLD_FROZEN_MSG);
 				return false;
 			}
 			return true;
@@ -110,15 +111,21 @@ public class WorldFreeze implements ModInitializer {
 			.createPersistent(Identifier.of(MOD_ID, "frozen"), Codec.BOOL);
 
 	private static void addWorld(ServerCommandSource source, ServerWorld world) {
-		world.setAttached(IS_FROZEN, true);
-		updatePlayerAbilities(world);
-		sendMessage(source, "Added world: " + world.getRegistryKey().getValue());
+		if (world.setAttached(IS_FROZEN, true)) {
+			sendMessage(source, "World is already frozen");
+		} else {
+			updatePlayerAbilities(world);
+			sendMessage(source, "Added world: " + world.getRegistryKey().getValue());
+		}
 	}
 
 	private static void removeWorld(ServerCommandSource source, ServerWorld world) {
-		world.removeAttached(IS_FROZEN);
-		updatePlayerAbilities(world);
-		sendMessage(source, "Removed world: " + world.getRegistryKey().getValue());
+		if (world.removeAttached(IS_FROZEN)) {
+			updatePlayerAbilities(world);
+			sendMessage(source, "Removed world: " + world.getRegistryKey().getValue());
+		} else {
+			sendMessage(source, "World is not frozen");
+		}
 	}
 
 	private static void updatePlayerAbilities(ServerWorld world) {
@@ -134,9 +141,7 @@ public class WorldFreeze implements ModInitializer {
 	}
 
 	private static int list(ServerCommandSource source) {
-		MutableText msg = Text.empty()
-				.append(Text.literal("[" + MOD_NAME + "] ").formatted(Formatting.DARK_PURPLE))
-				.append(Text.literal("Current worlds:"));
+		StringBuilder sb = new StringBuilder("Current worlds:");
 		int count[] = { 0 };
 		Streams.stream(source.getServer().getWorlds())
 				.filter(WorldFreeze::isFrozen)
@@ -144,26 +149,34 @@ public class WorldFreeze implements ModInitializer {
 				.sorted()
 				.forEachOrdered(s -> {
 					count[0]++;
-					msg.append(Text.literal("\n - " + s));
+					sb.append("\n - " + s);
 				});
 		if (count[0] == 0) {
-			msg.append(Text.literal("\n No worlds are frozen"));
+			sb.append("\n No worlds are frozen");
 		}
-		source.sendMessage(msg);
+		sendMessage(source, sb.toString());
 		return count[0];
 	}
 
-	private static void sendMessage(ServerCommandSource source, Text... message) {
+	public static void sendMessage(PlayerEntity source, String message) {
+		sendMessage(source.getCommandSource((ServerWorld) source.getWorld()), message);
+	}
+
+	public static void sendMessage(PlayerEntity source, Text... message) {
+		sendMessage(source.getCommandSource((ServerWorld) source.getWorld()), message);
+	}
+
+	public static void sendMessage(ServerCommandSource source, String message) {
+		sendMessage(source, Text.literal(message).formatted(Formatting.GRAY));
+	}
+
+	public static void sendMessage(ServerCommandSource source, Text... message) {
 		MutableText msg = Text.empty()
 				.append(Text.literal("[" + MOD_NAME + "] ").formatted(Formatting.DARK_PURPLE));
 		for (Text text : message) {
 			msg.append(text);
 		}
 		source.sendMessage(msg);
-	}
-
-	private static void sendMessage(ServerCommandSource source, String message) {
-		sendMessage(source, Text.literal(message).formatted(Formatting.GRAY));
 	}
 
 	public static boolean isFrozen(World world) {
