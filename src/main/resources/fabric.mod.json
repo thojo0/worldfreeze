@@ -3,15 +3,14 @@
 	"id": "worldfreeze",
 	"version": "${version}",
 	"name": "WorldFreeze",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A server-side mod to freeze worlds, preventing any modifications.",
 	"authors": [
 		"thojo0"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/thojo0/worldfreeze"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0",
 	"icon": "assets/worldfreeze/icon.png",
 	"environment": "server",
 	"entrypoints": {
