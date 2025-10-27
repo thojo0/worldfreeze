@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "de.thojo0.worldfreeze.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ServerWorldMixin",
+		"ServerPlayerInteractionManagerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
