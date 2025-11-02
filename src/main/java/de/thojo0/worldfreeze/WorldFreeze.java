@@ -134,7 +134,7 @@ public class WorldFreeze implements ModInitializer {
 
 	private static void updatePlayerAbilities(ServerPlayerEntity player) {
 		player.interactionManager.getGameMode().setAbilities(player.getAbilities());
-		if (isFrozen(player.getWorld())) {
+		if (isFrozen(player.getEntityWorld())) {
 			player.getAbilities().allowModifyWorld = false;
 		}
 		player.sendAbilitiesUpdate();
@@ -159,11 +159,11 @@ public class WorldFreeze implements ModInitializer {
 	}
 
 	public static void sendMessage(PlayerEntity source, String message) {
-		sendMessage(source.getCommandSource((ServerWorld) source.getWorld()), message);
+		sendMessage(source.getCommandSource((ServerWorld) source.getEntityWorld()), message);
 	}
 
 	public static void sendMessage(PlayerEntity source, Text... message) {
-		sendMessage(source.getCommandSource((ServerWorld) source.getWorld()), message);
+		sendMessage(source.getCommandSource((ServerWorld) source.getEntityWorld()), message);
 	}
 
 	public static void sendMessage(ServerCommandSource source, String message) {

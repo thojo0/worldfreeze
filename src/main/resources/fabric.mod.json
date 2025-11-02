@@ -1,30 +1,24 @@
 {
-	"schemaVersion": 1,
-	"id": "worldfreeze",
-	"version": "${version}",
-	"name": "WorldFreeze",
-	"description": "A server-side mod to freeze worlds, preventing any modifications.",
-	"authors": [
-		"thojo0"
-	],
-	"contact": {
-		"sources": "https://github.com/thojo0/worldfreeze"
-	},
-	"license": "GPL-3.0",
-	"icon": "assets/worldfreeze/icon.png",
-	"environment": "server",
-	"entrypoints": {
-		"main": [
-			"de.thojo0.worldfreeze.WorldFreeze"
-		]
-	},
-	"mixins": [
-		"worldfreeze.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.4",
-		"java": ">=21",
-		"fabric-api": "*"
-	}
+  "schemaVersion": 1,
+  "id": "worldfreeze",
+  "version": "${version}",
+  "name": "WorldFreeze",
+  "description": "A server-side mod to freeze worlds, preventing any modifications.",
+  "authors": ["thojo0"],
+  "contact": {
+    "sources": "https://github.com/thojo0/worldfreeze"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/worldfreeze/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": ["de.thojo0.worldfreeze.WorldFreeze"]
+  },
+  "mixins": ["worldfreeze.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.17.3",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
 }

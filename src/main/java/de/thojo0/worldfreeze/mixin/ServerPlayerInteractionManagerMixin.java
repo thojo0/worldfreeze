@@ -20,7 +20,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Inject(method = "setGameMode", at = @At("TAIL"))
     private void setGameMode(GameMode gameMode, GameMode previousGameMode, CallbackInfo ci) {
-        if (WorldFreeze.isFrozen(player.getWorld())) {
+        if (WorldFreeze.isFrozen(player.getEntityWorld())) {
             player.getAbilities().allowModifyWorld = false;
         }
     }
