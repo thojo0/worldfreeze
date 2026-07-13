@@ -27,8 +27,8 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
@@ -45,7 +45,7 @@ public class WorldFreeze implements ModInitializer {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private static final MutableComponent WORLD_FROZEN_MSG = Component.literal("World is frozen!").withStyle(ChatFormatting.RED);
+	public static final MutableComponent WORLD_FROZEN_MSG = Component.literal("World is frozen!").withStyle(ChatFormatting.RED);
 
 	@Override
 	public void onInitialize() {
