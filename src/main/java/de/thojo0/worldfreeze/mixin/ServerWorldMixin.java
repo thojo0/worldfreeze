@@ -6,17 +6,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import de.thojo0.worldfreeze.WorldFreeze;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public abstract class ServerWorldMixin {
     @Shadow
-    private int idleTimeout;
+    private int emptyTime;
 
     @ModifyVariable(method = "tick", name = "bl2", at = @At("STORE"), ordinal = 1)
     public boolean tick(boolean value) {
-        if (WorldFreeze.isFrozen((ServerWorld) (Object) this)) {
-            this.idleTimeout = 400;
+        if (WorldFreeze.isFrozen((ServerLevel) (Object) this)) {
+            this.emptyTime = 400;
             return false;
         }
         return value;

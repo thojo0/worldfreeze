@@ -8,20 +8,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.thojo0.worldfreeze.WorldFreeze;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
-import net.minecraft.world.GameMode;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.level.GameType;
 
-@Mixin(ServerPlayerInteractionManager.class)
+@Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerInteractionManagerMixin {
     @Shadow
     @Final
-    private ServerPlayerEntity player;
+    private ServerPlayer player;
 
-    @Inject(method = "setGameMode", at = @At("TAIL"))
-    private void setGameMode(GameMode gameMode, GameMode previousGameMode, CallbackInfo ci) {
-        if (WorldFreeze.isFrozen(player.getEntityWorld())) {
-            player.getAbilities().allowModifyWorld = false;
+    @Inject(method = "setGameModeForPlayer", at = @At("TAIL"))
+    private void setGameMode(GameType gameMode, GameType previousGameMode, CallbackInfo ci) {
+        if (WorldFreeze.isFrozen(player.level())) {
+            player.getAbilities().mayBuild = false;
         }
     }
 }
